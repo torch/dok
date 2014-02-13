@@ -1,5 +1,5 @@
-====== Torch Tutorial ======
-{{anchor:torch.tutorial}}
+<a name="torch.tutorial"/>
+# Torch Tutorial #
 
 So you are wondering how to work with Torch?
 This is a little tutorial that should help get you started.
@@ -10,27 +10,27 @@ vectors, matrices and tensors and how to build and train a basic
 neural network. For anything else, you should know how to access the
 html help and read about how to do it.
 
-=====  What is Torch? =====
+## What is Torch? ##
 
 Torch7 provides a Matlab-like environment for state-of-the-art machine
 learning algorithms. It is easy to use and provides a very efficient
 implementation, thanks to a easy and fast scripting language (Lua) and
 an underlying C/C++ implementation.  You can read more about Lua
-[[http://www.lua.org|here]].
+[here](http://www.lua.org).
 
-=====  Installation =====
+## Installation ##
 
 First before you can do anything, you need to install Torch7 on your
 machine.  That is not described in detail here, but is instead
-described in the [[..:install:index|installation help]].
+described in the [installation help](..:install:index).
 
 
-=====  Checking your installation works and requiring packages =====
+## Checking your installation works and requiring packages ##
 
 If you have got this far, hopefully your Torch installation works. A simple
 way to make sure it does is to start Lua from the shell command line, 
 and then try to start Torch:
-<file lua>
+```lua
 $ torch
 Try the IDE: torch -ide
 Type help() for more info
@@ -41,29 +41,29 @@ t7> x = torch.Tensor()
 t7> print(x)
 [torch.DoubleTensor with no dimension]
 
-</file>
+```
 
-You might have to specify the exact path of the ''torch'' executable
+You might have to specify the exact path of the `torch` executable
 if you installed Torch in a non-standard path.
 
 In this example, we checked Torch was working by creating an empty
-[[..:torch:tensor|Tensor]] and printing it on the screen.  The Tensor
+[Tensor](..:torch:tensor) and printing it on the screen.  The Tensor
 is the main tool in Torch, and is used to represent vector, matrices
 or higher-dimensional objects (tensors).
 
-''torch'' only preloads the basic parts of torch (including
+`torch` only preloads the basic parts of torch (including
 Tensors). To see the list of all packages distributed with Torch7,
-click [[..:index|here]].
+click [here](..:index).
 
-===== Getting Help =====
+## Getting Help ##
 
 There are two main ways of getting help in Torch7. One way is ofcourse
 the html formatted help. However, another and easier method is to use
-inline help in torch interpreter. The ''torch'' executable also
+inline help in torch interpreter. The `torch` executable also
 integrates this capability. Help about any function can be accessed by
-calling the ''help()'' function.
+calling the `help()` function.
 
-<file lua>
+```lua
 
 t7> help(torch.rand)
 
@@ -75,15 +75,15 @@ random numbers from a uniform distribution on the interval (0,1).
 distribution on the interval (0,1).
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-</file>
+```
 
 Even a more intuitive method is to use tab completion. Whenever any
-input is entered at the ''torch'' prompt, one can eneter two
-consecutive ''TAB'' characters (''double TAB'') to get the syntax
-completion. Moreover entering ''double TAB'' at an open paranthesis
+input is entered at the `torch` prompt, one can eneter two
+consecutive `TAB` characters (`double TAB`) to get the syntax
+completion. Moreover entering `double TAB` at an open paranthesis
 also causes the help for that particular function to be printed.
 
-<file lua>
+```lua
 
 t7> torch.randn( -- enter double TAB after (
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -98,21 +98,21 @@ distribution with mean zero and variance one.
 /  \  
 t7> torch.randn(
 
-</file>
+```
 
-===== Lua Basics =====
+## Lua Basics ##
 
-Torch is entirely built around [[http://www.lua.org/|Lua]], so the first thing you have to 
-know is get some basic knowledge about the language. The [[http://www.lua.org/docs.html|online book]]
+Torch is entirely built around [Lua](http://www.lua.org/), so the first thing you have to 
+know is get some basic knowledge about the language. The [online book](http://www.lua.org/docs.html)
 is great for that. 
 
 Here I'll just summarize a couple of very basic things to get you started.
 
-==== Variables ====
+### Variables ###
 
 Creating variables is straightforward, Lua is dynamically typed language. Printing variables from the prompt is a bit misleading, you have to add the = sign before it:
 
-<file lua>
+```lua
 t7> a = 10
 t7> print(a)
 10
@@ -121,9 +121,9 @@ t7> = a
 t7> b = a + 1
 t7> = b
 11
-</file>
+```
 
-==== Lua's universal data structure: the table ====
+### Lua's universal data structure: the table ###
 
 The best thing about Lua is its consistency, and compactness. The whole language relies on a single data structure, the table, which will allow you to construct the most complex programs, with style!
 
@@ -135,7 +135,7 @@ The best thing about Lua is its consistency, and compactness. The whole language
 
 You already know enough about tables, let's hack around:
 
-<file lua>
+```lua
 t7> t = {}
 t7> =t
 {}
@@ -152,28 +152,28 @@ t7> = {1,2,3,'mixed types',true}
  [4] = string : "mixed types"
  [5] = true}
 t7> t =  {4,3,2,1}
-</file>
+```
 
 In the example above, we've shown how to use a table as a linear array. Lua is one-based, like Matlab, so if we try to get the length of this last array created, it'll be equal to the number of elements we've put in:
 
-<file lua>
+```lua
 t7> =#t
 4
-</file>
+```
 
 Ok, let's see about hash-tables now:
 
-<file lua>
+```lua
 t7> h = {firstname='Paul', lastname='Eluard', age='117'}
 t7> =h
 {[firstname] = string : "Paul"
  [lastname]  = string : "Eluard"
  [age]       = string : "117"}
-</file>
+```
 
 So now mixing arrays and hash-tables is easy:
 
-<file lua>
+```lua
 t7> h = {firstname='Paul', lastname='Eluard', age='117', 1, 2, 3}
 t7> =h
 {[1]         = 1
@@ -183,14 +183,14 @@ t7> =h
  [lastname]  = string : "Eluard"
  [age]       = string : "117"}
 t7> 
-</file>
+```
 
 Easy right?
 
 So we've seen a couple of basic types already: strings, numbers, tables, booleans (true/false). There's one last type in Lua: the function. 
 are first-order citizens in Lua, which means that they can be treated as regular variables. This is great, because it's the reason why we can construct very powerful data structures (such as objects) with tables:
 
-<file lua>
+```lua
 t7> h = {firstname='Paul', lastname='Eluard', age='117',
 . >      print=function(self)
 . >               print(self.firstname .. ' ' .. self.lastname 
@@ -203,13 +203,13 @@ t7> =h
  [print]     = function: 0x7f885d00c430
  [lastname]  = string : "Eluard"
  [age]       = string : "117"}
-</file>
+```
 
 In this example above, we're basically storing a function at the key (hash) print. It's fairly straightforward, note that the function takes one argument, named self, which is assumed to be the object itself. The function simply concatenates the fields of the table self, and prints the whole string.
 
 One important note: accessing fields of a table is either done using square brackets [], or the . operator. The square brackets are more general: they allow the use of arbitrary strings. In the following, we now try to access the elements of h, that we just created:
 
-<file lua>
+```lua
 t7> h. + TAB
 h.age        h.firstname  h.lastname   h.print(     
 
@@ -221,17 +221,17 @@ Paul Eluard (age: 117)
 
 t7> h:print()
 Paul Eluard (age: 117)
-</file>
+```
 
 On the first line we type h. and then use TAB to complete and automatically explore the symbols present in h. We then print h.print, and confirm that it is indeed a function.
 
 At the next line, we call the function h.print, and pass h as the argument (which becomes self in the body of the function). This is fairly natural, but a bit heavy to manipulate objects. Lua provides a simple shortcut, :, the column, which passes the parent table as the first argument: h:print() is strictly equivalent to h.print(h).
 
-==== Functions ====
+### Functions ###
 
 A few more things about functions: functions in Lua are proper closures, so in combination with tables, you can use them to build complex and very flexible programs. An example of closure is given here:
 
-<file lua>
+```lua
 myfuncs = {}
 for i = 1,4 do
     local calls = 0
@@ -251,17 +251,17 @@ t7> myfuncs[4]()
 2
 t7> myfuncs[1]()
 3
-</file>
+```
 
 You can use such closures to create objects on the fly, that is, tables which combine functions and data to act upon. Thanks to closure, data can live in arbitrary locations (not necessarily the object's table), and simply be bound at runtime to the function's scope.
 
-=====  Torch Basics: Playing with Tensors =====
+## Torch Basics: Playing with Tensors ##
 
 Ok, now we are ready to actually do something in Torch.  Lets start by
 constructing a vector, say a vector with 5 elements, and filling the
 i-th element with value i. Here's how:
 
-<file lua>
+```lua
 t7> x=torch.Tensor(5)
 t7> for i=1,5 do x[i]=i; end
 t7> print(x)
@@ -274,13 +274,13 @@ t7> print(x)
 [torch.DoubleTensor of dimension 5] 
 
 t7>
-</file>
+```
 
 However, making use of Lua's powerfull closures and functions being
 first class citizens of the language, the same code could be written
 in much nicer way:
 
-<file lua>
+```lua
 t7> x=torch.Tensor(5)
 t7> i=0;x:apply(function() i=i+1;return i; end)
 t7> =x
@@ -301,40 +301,40 @@ t7> =x
 [torch.DoubleTensor of dimension 5]
 
 t7> 
-</file>
+```
 
 To make a matrix (2-dimensional Tensor), one simply does something
-like ''x=torch.Tensor(5,5)'' instead:
+like `x=torch.Tensor(5,5)` instead:
 
-<file lua>
+```lua
 x=torch.Tensor(5,5)
 for i=1,5 do 
  for j=1,5 do 
    x[i][j]=math.random();
  end
 end
-</file>
+```
 
 Another way to do the same thing as the code above is provided by torch:
 
-<file lua>
+```lua
 x=torch.rand(5,5)
-</file>
+```
 
-The [[..:torch:maths|torch]] package contains a wide variety of commands 
+The [torch](..:torch:maths) package contains a wide variety of commands 
 for manipulating Tensors that follow rather closely the equivalent
 Matlab commands. For example one can construct Tensors using the commands
-[[..:torch:maths#torch.ones|ones]], 
-[[..:torch:maths#torch.zeros|zeros]], 
-[[..:torch:maths#torch.rand|rand]],
-[[..:torch:maths#torch.randn|randn]] and
-[[..:torch:maths#torch.eye|eye]], amongst others.
+[ones](..:torch:maths#torch.ones), 
+[zeros](..:torch:maths#torch.zeros), 
+[rand](..:torch:maths#torch.rand),
+[randn](..:torch:maths#torch.randn) and
+[eye](..:torch:maths#torch.eye), amongst others.
 
 Similarly, row or column-wise operations such as 
-[[..:torch:maths#torch.sum|sum]] and 
-[[..:torch:maths#torch.max|max]] are called in the same way:
+[sum](..:torch:maths#torch.sum) and 
+[max](..:torch:maths#torch.max) are called in the same way:
 
-<file lua>
+```lua
 t7> x1=torch.rand(5,5)
 t7> x2=torch.sum(x1,2); 
 t7> print(x2) 
@@ -346,15 +346,15 @@ t7> print(x2)
 [torch.DoubleTensor of dimension 5x1]
 
 t7>
-</file>
+```
 
 Naturally, many BLAS operations like matrix-matrix, matrix-vector products
 are implemented. We suggest everyone to install ATLAS or MKL libraries since
 Torch7 can optionally take advantage with these very efficient and multi-threaded 
 libraries if they are found in your system. Checkout 
-[[..:torch:maths|Mathematical operations using tensors.]] for details.
+[Mathematical operations using tensors.](..:torch:maths) for details.
 
-<file lua>
+```lua
 
 t7> a=torch.ones(5,5)
 t7> b=torch.ones(5,2)
@@ -382,30 +382,30 @@ t7> =torch.mm(a,b)
  5  5
 [torch.DoubleTensor of dimension 5x2]
 
-</file>
+```
 
-===== Types in Torch7 =====
+## Types in Torch7 ##
 
 In Torch7, different types of tensors can be used. By default, all
-tensors are created using ''double'' type. ''torch.Tensor'' is a
-convenience call to ''torch.DoubleTensor''. One can easily switch the
-default tensor type to other types, like ''float''.
+tensors are created using `double` type. `torch.Tensor` is a
+convenience call to `torch.DoubleTensor`. One can easily switch the
+default tensor type to other types, like `float`.
 
-<file lua>
+```lua
 t7> =torch.Tensor()
 [torch.DoubleTensor with no dimension]
 t7> torch.setdefaulttensortype('torch.FloatTensor')
 t7> =torch.Tensor()
 [torch.FloatTensor with no dimension]
-</file>
+```
 
-===== Saving code to files, running files =====
+## Saving code to files, running files ##
 
 Before we go any further, let's just review one basic thing: saving code to files, and executing them.
 
 As Torch relies on Lua, it's best to give all your files a .lua extension. Let's generate a lua file that contains some Lua code, and then execute it:
 
-<file lua>
+```lua
 $ echo "print('Hello World\!')" > helloworld.lua
 ...
 
@@ -417,25 +417,25 @@ $ torch
 ...
 t7> dofile 'helloworld.lua'
 Hello World!
-</file>
+```
 
 That's it, you can either run programs form your shell, or from the Torch prompt. You can also run programs from the shell, and get an interactive prompt whenever an error occurs, or the program terminates (good for debugging):
 
-<file lua>
+```lua
 $ torch -i helloworld.lua
 ...
 Hello World!
 t7>
-</file>
+```
 
 We're good with all the basic things: you now know how to run code, from files or from the prompt, and write basic Lua (which is almost all Lua is!).
 
-=====  Example: training a neural network =====
+## Example: training a neural network ##
 
-We will show now how to train a neural network using the [[..:nn:index|nn]] package
+We will show now how to train a neural network using the [nn](..:nn:index) package
 available in Torch.
 
-====  Torch basics: building a dataset using Lua tables ====
+### Torch basics: building a dataset using Lua tables ###
 
 In general the user has the freedom to create any kind of structure he
 wants for dealing with data.
@@ -447,33 +447,33 @@ user's creativity.
 
 
 However, if you want to use some convenience classes, like
-[[..:nn:index#nn.StochasticGradient|StochasticGradient]], which basically
+[StochasticGradient](..:nn:index#nn.StochasticGradient), which basically
 does the training loop for you, one has to follow the dataset
 convention of these classes.  (We will discuss manual training of a
 network, where one does not use these convenience classes, in a later
 section.)
 
-StochasticGradient expects as a ''dataset'' an object which implements
-the operator ''dataset[index]'' and implements the method
-''dataset:size()''. The ''size()'' methods returns the number of
-examples and ''dataset[i]'' has to return the i-th example.
+StochasticGradient expects as a `dataset` an object which implements
+the operator `dataset[index]` and implements the method
+`dataset:size()`. The `size()` methods returns the number of
+examples and `dataset[i]` has to return the i-th example.
 
-An ''example'' has to be an object which implements the operator
-''example[field]'', where ''field'' often takes the value ''1'' (for
-input features) or ''2'' (for corresponding labels), i.e an example is
+An `example` has to be an object which implements the operator
+`example[field]`, where `field` often takes the value `1` (for
+input features) or `2` (for corresponding labels), i.e an example is
 a pair of input and output objects.  The input is usually a Tensor
 (exception: if you use special kind of gradient modules, like
-[[..:nn:index#nn.TableLayers|table layers]]). The label type depends
+[table layers](..:nn:index#nn.TableLayers)). The label type depends
 on the criterion. For example, the
-[[..:nn:index#nn.MSECriterion|MSECriterion]] expects a Tensor, but the
-[[..:nn:index#nn.ClassNLLCriterion|ClassNLLCriterion]] expects an
+[MSECriterion](..:nn:index#nn.MSECriterion) expects a Tensor, but the
+[ClassNLLCriterion](..:nn:index#nn.ClassNLLCriterion) expects an
 integer (the class).
 
 Such a dataset is easily constructed by using Lua tables, but it could any object
 as long as the required operators/methods are implemented.
 
 Here is an example of making a dataset for an XOR type problem:
-<file lua>
+```lua
 dataset={};
 function dataset:size() return 100 end -- 100 examples
 for i=1,dataset:size() do 
@@ -486,55 +486,55 @@ for i=1,dataset:size() do
 	end
 	dataset[i] = {input, output};
 end
-</file>
+```
 
-====  Torch basics: building a neural network ====
+### Torch basics: building a neural network ###
 
 To train a neural network we first need some data.  We can use the XOR data
 we just generated in the section before.  Now all that remains is to define
 our network architecture, and train it.
 
 To use Neural Networks in Torch you have to require the 
-[[..:nn:index|nn]] package. 
-A classical feed-forward network is created with the ''Sequential'' object:
-<file lua>
+[nn](..:nn:index) package. 
+A classical feed-forward network is created with the `Sequential` object:
+```lua
 require "nn"
 mlp=nn.Sequential();  -- make a multi-layer perceptron
-</file>
+```
 
 To build the layers of the network, you simply add the Torch objects 
-corresponding to those layers to the //mlp// variable created above.
+corresponding to those layers to the _mlp_ variable created above.
 
 The two basic objects you might be interested in first are the 
-[[..:nn:index#nn.Linear|Linear]] and 
-[[..:nn:index#nn.Tanh|Tanh]] layers.
+[Linear](..:nn:index#nn.Linear) and 
+[Tanh](..:nn:index#nn.Tanh) layers.
 The Linear layer is created with two parameters: the number of input
 dimensions, and the number of output dimensions. 
 So making a classical feed-forward neural network with one hidden layer with 
-//HUs// hidden units is as follows:
-<file lua>
+_HUs_ hidden units is as follows:
+```lua
 require "nn"
 mlp=nn.Sequential();  -- make a multi-layer perceptron
 inputs=2; outputs=1; HUs=20;
 mlp:add(nn.Linear(inputs,HUs))
 mlp:add(nn.Tanh())
 mlp:add(nn.Linear(HUs,outputs))
-</file>
+```
 
 
-====  Torch basics: training a neural network ====
+### Torch basics: training a neural network ###
 
 Now we're ready to train.
 This is done with the following code:
-<file lua>
+```lua
 criterion = nn.MSECriterion()  
 trainer = nn.StochasticGradient(mlp, criterion)
 trainer.learningRate = 0.01
 trainer:train(dataset)
-</file>
+```
 
 You should see printed on the screen something like this:
-<file lua>
+```lua
 # StochasticGradient: training
 # current error = 0.94550937745458
 # current error = 0.83996744568527
@@ -547,30 +547,30 @@ You should see printed on the screen something like this:
 # current error = 0.34321901952818
 # current error = 0.34206793525954
 # StochasticGradient: you have reached the maximum number of iterations
-</file>
+```
 
-Some other options of the //trainer// you might be interested in are for example:
-<file lua>
+Some other options of the _trainer_ you might be interested in are for example:
+```lua
 trainer.maxIteration = 10
 trainer.shuffleIndices = false
-</file>
+```
 See the nn package description of the
-[[..:nn:index#nn.StochasticGradient|StochasticGradient]] object
+[StochasticGradient](..:nn:index#nn.StochasticGradient) object
 for more details.
 
 
-====  Torch basics: testing your neural network ====
+### Torch basics: testing your neural network ###
 
 To test your network on a single example you can do this:
-<file lua>
+```lua
 x=torch.Tensor(2);   -- create a test example Tensor
 x[1]=0.5; x[2]=-0.5; -- set its values
 pred=mlp:forward(x)  -- get the prediction of the mlp 
 print(pred)          -- print it 
-</file>
+```
 
 You should see that your network has learned XOR:
-<file lua>
+```lua
 t7> x=torch.Tensor(2); x[1]=0.5; x[2]=0.5; print(mlp:forward(x))
 -0.5886
 [torch.DoubleTensor of dimension 1]
@@ -586,17 +586,17 @@ t7> x=torch.Tensor(2); x[1]=0.5; x[2]=-0.5; print(mlp:forward(x))
 t7> x=torch.Tensor(2); x[1]=-0.5; x[2]=-0.5; print(mlp:forward(x))
 -0.5576
 [torch.DoubleTensor of dimension 1]
-</file>
+```
 
-====  Manual Training of a Neural Network ====
+### Manual Training of a Neural Network ###
 
-Instead of using the [[..:nn:index#nn.StochasticGradient|StochasticGradient]] class
+Instead of using the [StochasticGradient](..:nn:index#nn.StochasticGradient) class
 you can directly make the forward and backward calls on the network yourself.
 This gives you greater flexibility.
 In the following code example we create the same XOR data on the fly
 and train each example online.
 
-<file lua>
+```lua
 criterion = nn.MSECriterion()  
 mlp=nn.Sequential();  -- make a multi-layer perceptron
 inputs=2; outputs=1; HUs=20;
@@ -630,23 +630,24 @@ for i = 1,2500 do
   -- (3) update parameters with a 0.01 learning rate
   mlp:updateParameters(0.01)
 end
-</file>
+```
 
 Super!
 
-===== Concluding remarks / going further =====
+## Concluding remarks / going further ##
 
 That's the end of this tutorial, but not the end of what you have left
 to discover of Torch! To explore more of Torch, you should take a look
-at the [[..:index|Torch package help]] which has been linked to
+at the [Torch package help](..:index) which has been linked to
 throughout this tutorial every time we have mentioned one of the basic
 Torch object types.  The Torch library reference manual is available
-[[..:index|here]] and the external torch packages installed on your
-system can be viewed [[..:torch:index|here]].
+[here](..:index) and the external torch packages installed on your
+system can be viewed [here](..:torch:index).
 
 We've also compiled a couple of demonstrations and tutorial scripts
 that demonstrate how to train more complex models, and build gui-based
 demos, and so on... All of these can be found in 
-[[http://github.com/andresy/torch-demos|this repo]].
+[this repo](http://github.com/andresy/torch-demos).
 
 Good luck and have fun!
+

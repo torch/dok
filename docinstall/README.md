@@ -1,170 +1,170 @@
-====== Torch Installation Manual ======
-{{anchor:install.dok}}
+<a name="install.dok"/>
+# Torch Installation Manual #
 
 Currently Torch7 installation can be done only from the
 sources. Binary releaseses will be distributed soon.
 
-======  Installing from sources ======
-{{anchor:install.sources}}
+<a name="install.sources"/>
+# Installing from sources #
 
-''Torch7'' is mainly made out of ''ANSI C'' and ''Lua'', which makes
+`Torch7` is mainly made out of `ANSI C` and `Lua`, which makes
 it easy to compile everywhere. The graphical interface is based on QT
-and requires a ''C++'' compiler.
+and requires a `C++` compiler.
 
 The installation process became easily portable on most platforms,
-thanks to [[http://www.cmake.org|CMake]], a tool which replace the
-aging ''configure/automake'' tools. CMake allows us to detect and
+thanks to [CMake](http://www.cmake.org), a tool which replace the
+aging `configure/automake` tools. CMake allows us to detect and
 configure Torch properly.
 
 You will find here step-by-step instructions for each system we are supporting.
 
-You are also strongly encouraged to read the [[#CMakeHints|CMake hints]]
+You are also strongly encouraged to read the [CMake hints](#CMakeHints)
 section for more details on CMake (and before reporting a problem).
 
 If you are a programmer, you might want to produce your own
-[[#DevPackages|development package]].
+[development package](#DevPackages).
 
-=====  Linux =====
-{{anchor:install.linux}}
+<a name="install.linux"/>
+## Linux ##
 
-==== A. Requirements ====
+### A. Requirements ###
 
 Torch compilation requires a number of standard packages described below:
-  * **Mandatory:**
-    * A ''C/C++'' compiler. [[http://clang.llvm.org|CLang]] is great. The [[http://gcc.gnu.org|GNU compiler]] or Intel compiler work fine.
-    * [[http://www.cmake.org|CMake]] version 2.6 or later is required.
-    * [[http://gnuplot.info|Gnuplot]], version ''4.4'' or later is recommended for best experience.
+  * __Mandatory:__
+    * A `C/C++` compiler. [CLang](http:_clang.llvm.org) is great. The [GNU compiler](http:_gcc.gnu.org) or Intel compiler work fine.
+    * [CMake](http://www.cmake.org) version 2.6 or later is required.
+    * [Gnuplot](http://gnuplot.info), version `4.4` or later is recommended for best experience.
 
-  * **Recommended:**
-    * [[http://tiswww.case.edu/php/chet/readline/rltop.html|GNU Readline]]
-    * [[http://git-scm.com/|Git]] to keep up-to-date sources
-    * [[http://trolltech.com/products|QT 4.4]] or newer development libraries
-    * BLAS. [[https://github.com/xianyi/OpenBLAS|OpenBLAS]] is recommended for that purpose on Intel computers.
-    * LAPACK. [[https://github.com/xianyi/OpenBLAS|OpenBLAS]] is recommended for that purpose on Intel computers.
+  * __Recommended:__
+    * [GNU Readline](http://tiswww.case.edu/php/chet/readline/rltop.html)
+    * [Git](http://git-scm.com/) to keep up-to-date sources
+    * [QT 4.4](http://trolltech.com/products) or newer development libraries
+    * BLAS. [OpenBLAS](https://github.com/xianyi/OpenBLAS) is recommended for that purpose on Intel computers.
+    * LAPACK. [OpenBLAS](https://github.com/xianyi/OpenBLAS) is recommended for that purpose on Intel computers.
 
 The installation of most of these packages should be rather
-straightforward. For ''Ubuntu 10.04 LTS'' system we use the
-''apt-get'' magic:
+straightforward. For `Ubuntu 10.04 LTS` system we use the
+`apt-get` magic:
 
 For GCC:
-<file>
+```
 sudo apt-get install gcc g++
-</file>
+```
 If you prefer to use CLang:
-<file>
+```
 sudo apt-get install clang
-</file>
+```
 
 CMake reads CC and CXX variables. If you do not want to use the default compiler, just do
-<file>
+```
 export CC=clang
 export CXX=clang++
-</file>
+```
 
 To install the additional packages, do:
-<file>
+```
 sudo apt-get install cmake
 sudo apt-get install libreadline5-dev
 sudo apt-get install git-core
 sudo apt-get install gnuplot
-</file>
+```
 
 Please adapt according to your distribution.
 
 Note: readline library is helpful for better command line interaction,
 but it is not required. It is only used when QT is installed.
 
-We require ''QT 4.4'' for handling graphics (//beware// not installing QT 4.3
+We require `QT 4.4` for handling graphics (_beware_ not installing QT 4.3
 or older). If it is not found at compile time, Torch will still compile but
-no graphics will be available. On ''Ubuntu 10.04 LTS'' distribution you can
+no graphics will be available. On `Ubuntu 10.04 LTS` distribution you can
 install it with
-<file>
+```
 sudo apt-get install libqt4-core libqt4-gui libqt4-dev
-</file>
+```
 
 An excellent BLAS/LAPACK implementation is also recommended for speed. See
-our [[blas|BLAS recommendations]].
+our [BLAS recommendations](blas).
 
-==== B. Getting Torch sources ====
-{{anchor:install.sources}}
+<a name="install.sources"/>
+### B. Getting Torch sources ###
 
-Torch7 is being developed on [[http://github.com|github]].
+Torch7 is being developed on [github](http://github.com).
 
-<file>
+```
 git clone git://github.com/andresy/torch.git
-</file>
+```
 
 
-==== C. Configuring Torch ====
-{{anchor:install.config}}
+<a name="install.config"/>
+### C. Configuring Torch ###
 
-We use ''CMake'' for configuring ''Torch''. We //highly// recommend to create
+We use `CMake` for configuring `Torch`. We _highly_ recommend to create
 first a dedicated build directory. This eases cleaning up built objects,
-but also allow you to build Torch with //various configurations//
+but also allow you to build Torch with _various configurations_
 (e.g. Release and Debug in two different build directories).
 
-<file>
+```
 cd torch
 mkdir build
 cd build
 cmake ..
-</file>
+```
 
-The ''..'' given to ''cmake'' indicates the directory where the
-sources are. We chose here to have a ''build'' directory inside
-''torch'', but it could be anywhere else. In that latter case, go
+The `..` given to `cmake` indicates the directory where the
+sources are. We chose here to have a `build` directory inside
+`torch`, but it could be anywhere else. In that latter case, go
 instead in your build directory and then do: 
 
-<file>
+```
 cmake /path/to/torch/sources
-</file>
+```
 
 CMake detects external libraries or tools necessary for Torch, and
 produces Makefiles such that Torch is then easily compilable on your
 platform. If you prefer the GUI version of CMake, you can replace
-''cmake'' by ''ccmake'' in the above command lines. In particular, it
-is //strongly encouraged// to use ''ccmake'' for finer configuration
+`cmake` by `ccmake` in the above command lines. In particular, it
+is _strongly encouraged_ to use `ccmake` for finer configuration
 of Torch.
 
 The most common Torch configuration step you might want to perform is
 changing the installation path. By default, Torch will be installed in
-''/usr/local''. You will need super-user rights to perform that. If
+`/usr/local`. You will need super-user rights to perform that. If
 you are not root on your computer, you can instead specifying a
-install directory to ''CMake'' on the above ''cmake'' command:
+install directory to `CMake` on the above `cmake` command:
 
-<file>
+```
 cmake .. -DCMAKE_INSTALL_PREFIX=/my/install/path
-</file>
+```
 
-Equivalently you can set the variable ''CMAKE_INSTALL_PREFIX'' if you
-use ''ccmake'' GUI.  Please, see [[http://www.cmake.org|CMake
-documentation]] or //at least// [[#CMakeHints|some of our CMake
+Equivalently you can set the variable `CMAKE_INSTALL_PREFIX` if you
+use `ccmake` GUI.  Please, see [[http://www.cmake.org|CMake
+documentation]] or _at least_ [[#CMakeHints|some of our CMake
 hints]] for more details on configuration.
 
-==== D. Compiling and installing ====
-{{anchor:install.compile}}
+<a name="install.compile"/>
+### D. Compiling and installing ###
 
 If the configuration was successful, Makefiles should have appeared in
 your build directory.  Compile Torch with:
 
 then compile and install with:
-<file>
+```
 make install
-</file>
+```
 
-This last command might possibly be prefixed by ''sudo'' if you are
-installing Torch in ''/usr/local''.
+This last command might possibly be prefixed by `sudo` if you are
+installing Torch in `/usr/local`.
 
-==== E. Running Torch ====
-{{anchor:install.run}}
+<a name="install.run"/>
+### E. Running Torch ###
 
-Now Torch should be installed in ''/usr/local'' or in
-''/my/install/path'' if you chose to use the ''CMAKE_INSTALL_PREFIX''
-when configuring with CMake.  Lua executables (''torch-lua'', 
-''torch-qlua'' and ''torch'') are found in the ''bin'' sub-directory of 
+Now Torch should be installed in `/usr/local` or in
+`/my/install/path` if you chose to use the `CMAKE_INSTALL_PREFIX`
+when configuring with CMake.  Lua executables (`torch-lua`, 
+`torch-qlua` and `torch`) are found in the `bin` sub-directory of 
 these installation directories.
 
-<file>
+```
 /usr/local/bin/torch-lua
 Lua 5.1.4  Copyright (C) 1994-2008 Lua.org, PUC-Rio
 > require 'torch'
@@ -178,18 +178,18 @@ Lua 5.1.4  Copyright (C) 1994-2008 Lua.org, PUC-Rio
 [torch.Tensor of dimension 5]
 
 > 
-</file>
+```
 
-For convenience, you might want to add to your ''PATH'' the path to
-lua binaries. The executable ''torch-lua'' is a simple Lua interpreter 
-(as provided on [[http://www.lua.org|Lua website]]), while ''torch-qlua'' 
+For convenience, you might want to add to your `PATH` the path to
+lua binaries. The executable `torch-lua` is a simple Lua interpreter 
+(as provided on [Lua website](http://www.lua.org)), while `torch-qlua` 
 has enhanced interactivity (like completion) and is able to handle
 graphics and QT widgets.
 
-For best experience we suggest using the ''torch'' executable, which
+For best experience we suggest using the `torch` executable, which
 preloads the most commonly used libraries into the global namespace.
 
-<file>
+```
 /usr/local/bin/torch
 Try the IDE: torch -ide
 Type help() for more info
@@ -210,11 +210,11 @@ torch> =torch.randn(10,10)
 
 torch> 
 
-</file>
+```
 
-You can get more help about ''torch'':
+You can get more help about `torch`:
 
-<file>
+```
 /usr/local/bin/torch -h
 Torch7 Shell
 
@@ -232,24 +232,24 @@ Qt options:
   -nographics|-ng  disable all the graphical capabilities [false]
   -ide             enable IDE (graphical console) [false]
   -onethread       run lua in the main thread (might be safer) [false] 
-</file>
+```
 
-=====  MacOS X =====
+## MacOS X ##
 
-==== A. Requirements ====
+### A. Requirements ###
 
 Torch compilation requires a number of standard packages described below:
-  * **Mandatory:**
-    * A ''C/C++'' compiler. [[http://clang.llvm.org|CLang]] is great. The [[http://gcc.gnu.org|GNU compiler]] or Intel compiler work fine.
-    * [[http://www.cmake.org|CMake]] version 2.6 or later is required.
-    * [[http://gnuplot.info|Gnuplot]], version ''4.4'' or later is recommended for best experience.
+  * __Mandatory:__
+    * A `C/C++` compiler. [CLang](http:_clang.llvm.org) is great. The [GNU compiler](http:_gcc.gnu.org) or Intel compiler work fine.
+    * [CMake](http://www.cmake.org) version 2.6 or later is required.
+    * [Gnuplot](http://gnuplot.info), version `4.4` or later is recommended for best experience.
 
-  * **Recommended:**
-    * [[http://tiswww.case.edu/php/chet/readline/rltop.html|GNU Readline]]
-    * [[http://git-scm.com/|Git]] to keep up-to-date sources
-    * [[http://trolltech.com/products|QT 4.4]] or newer development libraries
-    * BLAS. [[https://github.com/xianyi/OpenBLAS|OpenBLAS]] is recommended for that purpose on Intel computers.
-    * LAPACK. [[https://github.com/xianyi/OpenBLAS|OpenBLAS]] is recommended for that purpose on Intel computers.
+  * __Recommended:__
+    * [GNU Readline](http://tiswww.case.edu/php/chet/readline/rltop.html)
+    * [Git](http://git-scm.com/) to keep up-to-date sources
+    * [QT 4.4](http://trolltech.com/products) or newer development libraries
+    * BLAS. [OpenBLAS](https://github.com/xianyi/OpenBLAS) is recommended for that purpose on Intel computers.
+    * LAPACK. [OpenBLAS](https://github.com/xianyi/OpenBLAS) is recommended for that purpose on Intel computers.
 
 Installation of gcc should be done by installing the
 [[http://developer.apple.com/tools/xcode|the Apple developer
@@ -257,200 +257,200 @@ tools]]. These tools should also be available on you MacOS X
 installation DVD.
 
 CMake can be retrieved from
-[[http://www.cmake.org/HTML/Download.html|CMake website]] (you can
-take the **DMG** installer). However, we found it was as simple to use
-[[http://mxcl.github.com/homebrew/|Homebrew]], or [[http://www.macports.org/|MacPorts]]
+[CMake website](http://www.cmake.org/HTML/Download.html) (you can
+take the __DMG__ installer). However, we found it was as simple to use
+[Homebrew](http:_mxcl.github.com/homebrew/), or [MacPorts](http:_www.macports.org/)
 which are necessary anyway for git and the Readline library. We recommend to avoid
-[[http://finkproject.org/|Fink]], which tends to be always
+[Fink](http://finkproject.org/), which tends to be always
 outdated. Assuming you installed Homebrew, just do:
 
-<file>
+```
 brew install readline
 brew install cmake
 brew install git
 brew install gnuplot
-</file>
+```
 
 For installing QT, one can use Homebrew, but it might take too long to
 compile.  Instead, you can
-[[http://trolltech.com/downloads/opensource/appdev/mac-os-cpp|download]]
-the binary **DMG** file available on [[http://trolltech.com|Trolltech
+[download](http://trolltech.com/downloads/opensource/appdev/mac-os-cpp)
+the binary __DMG__ file available on [[http://trolltech.com|Trolltech
 website]] and install it.
 
 An excellent BLAS/LAPACK implementation is also recommended for speed. See
-our [[blas|BLAS recommendations]].
+our [BLAS recommendations](blas).
 
 Last but not least, GCC >= 4.6 is *required* to enable OpenMP on MacOS X. This
 is a bit crazy, but compiling against OpenMP with previous versions of GCC
 will give you random segfaults and trap errors (a known issue on the web).
 We strongly recommend you to install GCC 4.6, to fully benefit from Torch's
 fast numeric routines. A very simple way of doing so is to install the 
-[[http://gcc.gnu.org/wiki/GFortranBinaries|GFortran]] libraries, which are
+[GFortran](http://gcc.gnu.org/wiki/GFortranBinaries) libraries, which are
 packaged as a simple dmg, ready to install. That'll automatically install gcc
 and g++. Once this is done, set your CC and CXX before building Torch:
 
-<file>
+```
 export CC=/usr/local/gfortran/bin/gcc
 export CXX=/usr/local/gfortran/bin/g++
-</file>
+```
 
-==== B. Getting Torch sources ====
+### B. Getting Torch sources ###
 
-Same as [[#install.sources|getting sources]] for linux.
+Same as [getting sources](#install.sources) for linux.
 
-==== C. Configuring Torch ====
+### C. Configuring Torch ###
 
-Same as [[#install.config|configuring]] for linux.
+Same as [configuring](#install.config) for linux.
 
-==== D. Compiling and Installing ====
+### D. Compiling and Installing ###
 
-Same as [[#install.compile|compiling]] for linux.
+Same as [compiling](#install.compile) for linux.
 
-==== E. Running Torch ====
+### E. Running Torch ###
 
-Same as [[#install.run|runnning]] for linux.
+Same as [runnning](#install.run) for linux.
 
-=====  FreeBSD =====
-{{anchor:install.freebsd}}
+<a name="install.freebsd"/>
+## FreeBSD ##
 
-==== A. Requirements ====
+### A. Requirements ###
 
 Torch compilation requires a number of standard packages described below:
-  * **Mandatory:**
-    * A ''C/C++'' compiler. [[http://clang.llvm.org|CLang]] is great. The [[http://gcc.gnu.org|GNU compiler]] or Intel compiler work fine.
-    * [[http://www.cmake.org|CMake]] version 2.6 or later is required.
-    * [[http://gnuplot.info|Gnuplot]], version ''4.4'' or later is recommended for best experience.
+  * __Mandatory:__
+    * A `C/C++` compiler. [CLang](http:_clang.llvm.org) is great. The [GNU compiler](http:_gcc.gnu.org) or Intel compiler work fine.
+    * [CMake](http://www.cmake.org) version 2.6 or later is required.
+    * [Gnuplot](http://gnuplot.info), version `4.4` or later is recommended for best experience.
 
-  * **Recommended:**
-    * [[http://tiswww.case.edu/php/chet/readline/rltop.html|GNU Readline]]
-    * [[http://git-scm.com/|Git]] to keep up-to-date sources
-    * [[http://trolltech.com/products|QT 4.4]] or newer development libraries
-    * BLAS. [[https://github.com/xianyi/OpenBLAS|OpenBLAS]] is recommended for that purpose on Intel computers.
-    * LAPACK. [[https://github.com/xianyi/OpenBLAS|OpenBLAS]] is recommended for that purpose on Intel computers.
+  * __Recommended:__
+    * [GNU Readline](http://tiswww.case.edu/php/chet/readline/rltop.html)
+    * [Git](http://git-scm.com/) to keep up-to-date sources
+    * [QT 4.4](http://trolltech.com/products) or newer development libraries
+    * BLAS. [OpenBLAS](https://github.com/xianyi/OpenBLAS) is recommended for that purpose on Intel computers.
+    * LAPACK. [OpenBLAS](https://github.com/xianyi/OpenBLAS) is recommended for that purpose on Intel computers.
 
 GCC and CLang come with FreeBSD install. However, only GCC 4.2 is installed by default (for licensing reasons).
 We prefer to use CLang. If you want to stick with GCC, we recommend installing GCC 4.4 or GCC 4.6 instead of using
 GCC 4.2 (poor performance on recent CPUs).
-<file>
+```
 pkg_add -r gcc46
-</file>
+```
 
 CMake reads CC and CXX variables. If you do not want to use the default compiler, just do
-<file>
+```
 export CC=clang
 export CXX=clang++
-</file>
+```
 
 Additional packages can be easily installed with:
-<file>
+```
 pkg_add -r readline
 pkg_add -r cmake
 pkg_add -r git
 pkg_add -r gnuplot
-</file>
+```
 
-Note: on FreeBSD 9.0, it seems ''pdflib'' (a dependency of gnuplot) is not available as binary. Please,
+Note: on FreeBSD 9.0, it seems `pdflib` (a dependency of gnuplot) is not available as binary. Please,
 install gnuplot instead in the port tree:
-<file>
+```
 cd /usr/ports/math/gnuplot
 make install clean
-</file>
+```
 
-For installing QT, use also ''pkg_add -r qt4'', followed by ''pkg_add -r qt4-XXX'', where
-XXX is one of the components (or tools) listed on [[http://www.freebsd.org/doc/en/books/porters-handbook/using-qt.html|Qt FreeBSD page]].
+For installing QT, use also `pkg_add -r qt4`, followed by `pkg_add -r qt4-XXX`, where
+XXX is one of the components (or tools) listed on [Qt FreeBSD page](http://www.freebsd.org/doc/en/books/porters-handbook/using-qt.html).
 Be sure to install all components and tools listed there.
 
 An excellent BLAS/LAPACK implementation is also recommended for speed. See
-our [[blas|BLAS recommendations]].
+our [BLAS recommendations](blas).
 
-==== B. Getting Torch sources ====
+### B. Getting Torch sources ###
 
-Same as [[#install.sources|getting sources]] for linux.
+Same as [getting sources](#install.sources) for linux.
 
-==== C. Configuring Torch ====
+### C. Configuring Torch ###
 
-Same as [[#install.config|configuring]] for linux. Note that dynamic RPATH (related to ''$ORIGIN'') do not work properly
-on my FreeBSD 9. You can deactivate this with the ''WITH_DYNAMIC_RPATH'' option.
-<file>
+Same as [configuring](#install.config) for linux. Note that dynamic RPATH (related to `$ORIGIN`) do not work properly
+on my FreeBSD 9. You can deactivate this with the `WITH_DYNAMIC_RPATH` option.
+```
 cmake .. -DCMAKE_INSTALL_PREFIX=/my/install/path -DWITH_DYNAMIC_RPATH=OFF
-</file>
+```
 
-==== D. Compiling and Installing ====
+### D. Compiling and Installing ###
 
-Same as [[#install.compile|compiling]] for linux.
+Same as [compiling](#install.compile) for linux.
 
-==== E. Running Torch ====
+### E. Running Torch ###
 
-Same as [[#install.run|runnning]] for linux.
+Same as [runnning](#install.run) for linux.
 
-=====  Cygwin =====
+## Cygwin ##
 
-//We do not recommend// Cygwin installation. Cygwin is pretty slow, and we
+_We do not recommend_ Cygwin installation. Cygwin is pretty slow, and we
 could not manage to make QT 4.4 work under Cygwin. Instead prefer
-[[#Windows|native windows]] installation.
+[native windows](#Windows) installation.
 
-=====  Windows =====
-{{anchor:Windows}}
+<a name="Windows"/>
+## Windows ##
 
-//** Torch7 is not yet Windows compatible, coming soon **//
+___ Torch7 is not yet Windows compatible, coming soon ___
 
 
-=====  CMake hints =====
-{{anchor:CMakeHints}}
+<a name="CMakeHints"/>
+## CMake hints ##
 
-CMake is well documented on [[http://www.cmake.org|http://www.cmake.org]].
+CMake is well documented on [http:_www.cmake.org](http:_www.cmake.org).
 
-====CMake and CLang====
+### CMake and CLang ###
 
-If you like to use [[http://clang.llvm.org|CLang]] for compiling Torch7, assuming a proper
+If you like to use [CLang](http://clang.llvm.org) for compiling Torch7, assuming a proper
 CLang installation, you only have to do
-<file>
+```
 export CC=clang
 export CXX=clang++
-</file>
+```
 before calling cmake command line.
 
-====CMake GUI====
+### CMake GUI ###
 
 Under Windows, CMake comes by default with a GUI. Under Unix system it is
-quite handy to use the //text GUI// available through ''ccmake''.
-''ccmake'' works in the same way than ''cmake'': go in your build directory and
-<file>
+quite handy to use the _text GUI_ available through `ccmake`.
+`ccmake` works in the same way than `cmake`: go in your build directory and
+```
 ccmake /path/to/torch/source
-</file>
+```
 
-Windows and Unix GUI works in the same way: you ''configure'', //possibly several times//,
-until CMake has detected everything and proposes to ''generate'' the configuration.
+Windows and Unix GUI works in the same way: you `configure`, _possibly several times_,
+until CMake has detected everything and proposes to `generate` the configuration.
 
 After each configuration step, you can modify CMake variables to suit your needs.
 
-====CMake variables====
+### CMake variables ###
 
-CMake is highly configurable thanks to //variables// you can set when
+CMake is highly configurable thanks to _variables_ you can set when
 executing it. It is really easy to change these variables with CMake GUI. If you want
 to stick with the command line you can also change a variable by doing:
-<file>
+```
 cmake /path/to/torch/source -DMY_VARIABLE=MY_VALUE
-</file>
-where ''MY_VARIABLE'' is the name of the variable you want to set and
-''MY_VALUE'' is its corresponding value.
+```
+where `MY_VARIABLE` is the name of the variable you want to set and
+`MY_VALUE` is its corresponding value.
 
-===Interesting standard CMake variables===
+#### Interesting standard CMake variables ####
 
-  * ''CMAKE_INSTALL_PREFIX'': directory where Torch is going to be installed
-  * ''CMAKE_BUILD_TYPE'': ''Release'' for optimized compilation, ''Debug'' for debug compilation.
-  * ''CMAKE_C_FLAGS'': add here the flags you want to pass to the C compiler (like ''-Wall'' for e.g.)
+  * `CMAKE_INSTALL_PREFIX`: directory where Torch is going to be installed
+  * `CMAKE_BUILD_TYPE`: `Release` for optimized compilation, `Debug` for debug compilation.
+  * `CMAKE_C_FLAGS`: add here the flags you want to pass to the C compiler (like `-Wall` for e.g.)
 
-=== Notable Torch7 CMake variables ===
+#### Notable Torch7 CMake variables ####
 
-  * ''WITH_BLAS'': specify which BLAS you want to use (if you have several on your computers). Can be mkl/open/goto/acml/atlas/accelerate/veclib/generic.
-  * ''WITH_LUA_JIT'': say to CMake to compile Torch7 against LuaJIT instead of Lua. (default is OFF)
-  * ''WITH_QTLUA'': compile QtLua if Qt is found (default is ON)
-  * ''WITH_QTLUA_IDE'': compile QtLua IDE if Qt is found (default is ON)
-  * ''WITH_RPATH'': use RPATH such that you do not need to add Torch7 install library path in LD_LIBRARY_PATH. (default is ON)
-  * ''WITH_DYNAMIC_RPATH'': if used together with WITH_RPATH, will make library paths relative to the Torch7 executable. If you move the install directory, things will still work. This flag does not work on FreeBSD. (default is ON).
+  * `WITH_BLAS`: specify which BLAS you want to use (if you have several on your computers). Can be mkl/open/goto/acml/atlas/accelerate/veclib/generic.
+  * `WITH_LUA_JIT`: say to CMake to compile Torch7 against LuaJIT instead of Lua. (default is OFF)
+  * `WITH_QTLUA`: compile QtLua if Qt is found (default is ON)
+  * `WITH_QTLUA_IDE`: compile QtLua IDE if Qt is found (default is ON)
+  * `WITH_RPATH`: use RPATH such that you do not need to add Torch7 install library path in LD_LIBRARY_PATH. (default is ON)
+  * `WITH_DYNAMIC_RPATH`: if used together with WITH_RPATH, will make library paths relative to the Torch7 executable. If you move the install directory, things will still work. This flag does not work on FreeBSD. (default is ON).
 
-====CMake caches everything====
+### CMake caches everything ###
 
 As soon as CMake performed a test to detect an external library, it saves
 the result of this test in a cache and will not test it again.
@@ -459,31 +459,31 @@ If you forgot to install a library (like QT or Readline), and install it
 after having performed a CMake configuration, it will not be used by Torch
 when compiling.
 
-//In doubt//, if you changed, updated, added some libraries that should be used by Torch, you should
-//erase your build directory and perform CMake configuration again//.
+_In doubt_, if you changed, updated, added some libraries that should be used by Torch, you should
+_erase your build directory and perform CMake configuration again_.
 
 
-=====  Development Torch packages =====
-{{anchor:DevPackages}}
+<a name="DevPackages"/>
+## Development Torch packages ##
 
-If you want to develop your own package, you can put it in the ''dev''
-sub-directory. Packages in ''dev'' are all compiled in the same way that the
-ones in ''packages'' sub-directory. We prefer to have this directory to make a
+If you want to develop your own package, you can put it in the `dev`
+sub-directory. Packages in `dev` are all compiled in the same way that the
+ones in `packages` sub-directory. We prefer to have this directory to make a
 clear difference between official packages and development packages.
 
-Alternatively, you can use [[#PackageManager|Torch package manager]] 
+Alternatively, you can use [Torch package manager](#PackageManager) 
 to build and distribute your packages.
 
-===== The Torch Package Management System =====
-{{anchor:PackageManager}}
+<a name="PackageManager"/>
+## The Torch Package Management System ##
 
 Torch7 has a built-in package management system that makes it very easy 
 for anyone to get extra (experimental) packages, and create and distribute
 yours.
 
-Calling ''torch-pkg'' without arguments will give you some help:
+Calling `torch-pkg` without arguments will give you some help:
 
-<file>
+```
 /usr/local/bin/torch-pkg
 Torch7 Package Manager
 
@@ -512,12 +512,12 @@ Options:
   -l|-local       local install
   -n|-nodeps      do not install dependencies (when installing)
   -d|-dry         dry run 
-</file>
+```
 
 It's fairly self-explanatory. You can easily get a list of the available
 packages:
 
-<file>
+```
 /usr/local/bin/torch-pkg list
 
 --> retrieving package lists from servers
@@ -535,49 +535,49 @@ packages:
     hosted at: https://github.com/koraykv/optim
 
 ...
-</file>
+```
 
 To install a new package, simply do:
 
-<file>
+```
 /usr/local/bin/torch-pkg install pkgname
-</file>
+```
 
 The sources of the packages are downloaded and kept in a hidden
 directory in your home:
 
-<file>
+```
 torch-pkg install image
 ls ~/.torch/torch-pkg/image/
-</file>
+```
 
 If you just want to get the sources of a package, without
 installing it, you can get it like this:
 
-<file>
+```
 /usr/local/bin/torch-pkg download pkgname
-</file>
+```
 
 And then build it and install it:
 
-<file>
+```
 cd pkgname
 /usr/local/bin/torch-pkg build
 /usr/local/bin/torch-pkg deploy
-</file>
+```
 
 If you need to distribute your own packages, you just have
 to create a package file, which contains one entry per package,
 and then make it available online. Users can then easily add
 that file to their repository by doing:
 
-<file>
+```
 /usr/local/bin/torch-pkg add http://url/to/config
-</file>
+```
 
 The config typically looks like:
 
-<file>
+```
 pkg = pkg or {}
 
 pkg.image = {
@@ -600,13 +600,14 @@ pkg.parallel = {
   dependencies = {'sys'},
   commit = 'newpack'
 }
-</file>
+```
 
-======  Installing from binaries ======
-{{anchor:install.binary}}
+<a name="install.binary"/>
+# Installing from binaries #
 
-** This section is not applicable now as we have not produced binaries yet. **
+__This section is not applicable now as we have not produced binaries yet.__
 
-** Please [[#install.sources|install from sources]]. **
+__Please [install from sources](#install.sources).__
+
 
 
