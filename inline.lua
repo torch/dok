@@ -2,7 +2,7 @@
 -- inline help
 -- that file defines all the tools and goodies to generate inline help
 --------------------------------------------------------------------------------
-require 'luarocks.cfg'
+local luarocks_cfg = require 'luarocks.cfg'
 
 local knownpkg = {}
 
@@ -267,7 +267,7 @@ end
 local function packageiterator()
    local co = coroutine.create(
                                function()
-         local trees = luarocks.cfg.rocks_trees
+         local trees = luarocks_cfg.rocks_trees
                                   for _,tree in ipairs(trees) do
             if tree.lua_dir then
                for file in paths.files(tree.lua_dir) do
