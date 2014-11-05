@@ -2,7 +2,39 @@
 -- inline help
 -- that file defines all the tools and goodies to generate inline help
 --------------------------------------------------------------------------------
-local luarocks_cfg = require 'luarocks.cfg'
+local function splitpackagepath()
+   local str = package.path
+   local t = {} 
+   local last_end = 1
+   local s, e, cap = string.find(str, "(.-);", 1)
+   while s do
+      if s ~= 1 or cap ~= "" then
+	 table.insert(t,cap)
+      end
+      last_end = e+1
+      s, e, cap = string.find(str, "(.-);", last_end)
+   end
+   if last_end <= string.len(str) then
+      cap = string.sub(str, last_end)
+      table.insert(t, cap)
+   end
+   -- get package prefixes
+   for i=1,#t do
+      local s,p = t[i]:find('?')
+      if s then t[i] = t[i]:sub(1,s-1) end
+   end
+   -- remove duplicates
+   local t2 = {}
+   for i=1,#t do
+      local exists = false;
+      for j=1,#t2 do if t[i] == t2[j] then 
+	    exists = true end; 
+      end
+      if not exists then table.insert(t2, t[i]) end
+   end
+   return t2
+end
+local mdsearchpaths = splitpackagepath()
 
 local knownpkg = {}
 
@@ -267,15 +299,13 @@ end
 local function packageiterator()
    local co = coroutine.create(
                                function()
-         local trees = luarocks_cfg.rocks_trees
-                                  for _,tree in ipairs(trees) do
-            if tree.lua_dir then
-               for file in paths.files(tree.lua_dir) do
-                  if file ~= '.' and file ~= '..' then
-                     coroutine.yield(file, paths.concat(tree.lua_dir, file))
-                  end
-               end
-            end
+         local trees = mdsearchpaths
+	 for _,tree in ipairs(trees) do
+	    for file in paths.files(tree) do
+	       if file ~= '.' and file ~= '..' then
+		  coroutine.yield(file, paths.concat(tree, file))
+	       end
+	    end
          end
       end)
 
