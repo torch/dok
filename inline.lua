@@ -432,11 +432,7 @@ function dok.help(symbol, asstring)
          print(inline)
          print(style.banner)
       else
-         if type(symbol) == 'function' or type(symbol) == 'table' then
-            pcall(symbol)
-         else
-            print('undocumented symbol')
-         end
+	 print('undocumented symbol')
       end
    end
 end
