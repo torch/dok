@@ -437,7 +437,7 @@ function dok.help(symbol, asstring)
    end
 end
 
-help = dok.help
+rawset(_G, 'help', dok.help)
 
 --------------------------------------------------------------------------------
 -- browse() is a simpler function that simply triggers a browser
@@ -456,7 +456,7 @@ function dok.browse()
    qtide = nil
 end
 
-browse = dok.browse
+rawset(_G, 'browse', dok.browse)
 
 --------------------------------------------------------------------------------
 -- standard usage function: used to display automated help for functions
