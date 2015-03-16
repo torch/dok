@@ -4,4 +4,4 @@ dok = {}
 
 require 'dok.inline'
 
-dok.dok2html = sd.render
+dok.markdown2html = sd.render

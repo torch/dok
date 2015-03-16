@@ -152,12 +152,13 @@ function dok.stylize(html, package)
    -- (0) useless white space
    styled = styled:gsub('^%s+','')
    -- (1) function title
-   styled = '\n' .. style.banner .. '\n' .. styled
    styled = styled:gsub('<h%d>(.-)</h%d>', function(title) return style.title .. title .. style.none .. '\n' end)
    -- (2) lists
-   styled = styled:gsub('<ul>(.-)</ul>', function(list) 
-                                            return list:gsub('<li>%s*(.-)%s*</li>%s*', style.list .. '%1\n')
-                                         end)
+   styled = styled:gsub('<ul>(.-)</ul>', 
+			function(list) 
+			   return list:gsub('<li>%s*(.-)%s*</li>%s*', style.list .. '%1\n')
+			end
+   )
    -- (3) code
    styled = styled:gsub('%s*<code>%s*(.-)%s*</code>%s*', style.code .. ' %1 ' .. style.none)
    styled = styled:gsub('%s*<code class%="%S-">%s*(.-)%s*</code>%s*', style.pre .. ' %1 ' .. style.none)
@@ -175,9 +176,11 @@ function dok.stylize(html, package)
    styled = styled:gsub('<a.->(.-)</a>', style.none .. '%1' .. style.none)
    -- (7) images
    styled = styled:gsub('<img.-src="(.-)".->%s*', 
-                         style.img .. 'image: file://' 
-                         .. paths.concat(package,'%1') -- OUCH DEBUG paths.install_dokmedia,
-                         .. style.none .. '\n')
+			style.img .. 'image: file://' 
+			   .. paths.concat(package,'%1') -- OUCH DEBUG paths.install_dokmedia,
+			   .. style.none .. '\n')
+   -- (8) remove internal anchors
+   styled = styled:gsub('<a(.-)/>', '')
    -- (-) paragraphs
    styled = styled:gsub('<p>', '\n')
    styled = styled:gsub('</p>', '')
@@ -188,7 +191,7 @@ function dok.stylize(html, package)
    styled = maxcols(styled)
    -- (-) conclude
    styled = styled:gsub('%s*$','')
-   --styled = styled .. '\n' .. style.banner
+
    return styled
 end
 
@@ -201,8 +204,42 @@ local function adddok(...)
    return table.concat(tt,'\n')
 end
 
+--[[
+   function dok.html2funcs(html, package)
+   This is how this function works:
+   It initializes the section to level-0 (which means a heading with <h0>). 
+   There cant be a html section higher than this, so root node.
+
+   It looks first for an anchor, like this one:
+      <a name="nn.dok"/>
+   Once it found an anchor, it gets the name of the anchor, in this case it is nn.dok
+
+   It also looks for headings, like this:
+      <h1>Neural Network Package</h1>
+   The level of the heading is determined by <h[number]>
+
+   It then sees if before the heading <h1> appeared and after the 
+   anchor (<a>) appeared, if any other lines were parsed. It records those 
+   lines in csection (just table.insert the lines) as a string.
+
+   Now, continuing, the level is a number. 
+   It looks at if the current level is lower than the current csection's level 
+   (which means is it higher up the tree towards the root). If it is, it 
+   traverses up the tree until it finds the parent is one level above, so that
+   it can insert the current node into the right level of the tree.
+   
+   Now, it creates this subsection (which depends on the anchor and heading-name.
+   it inserts it into this tree appropriately.
+
+   Then it keeps parsing lines until the lines are again either an anchor or 
+   a heading. Once this happens, the subsection is deemed to be traversed and sealed.
+
+   Then finally it creates a table of functions that have a key of the anchor 
+   name, and a value of the parsed lines (after stylizing them). A small 
+   check is done to make sure that the anchor name starts with the package-name.
+   
+]]--
 function dok.html2funcs(html, package)
---   print('processing -- package', package)
    local sections = {level=0}
    local csection = sections
    local canchor
@@ -241,19 +278,16 @@ function dok.html2funcs(html, package)
       table.insert(csection, table.concat(lines, '\n'))
       lines = {}
    end
-
+   
    local function printsection(section, txt)
       if section.level > 0 and section.name then
          table.insert(txt, string.format('<h%d>%s</h%d>', section.level, section.name, section.level))
       end
       if section.anchor then
---         table.insert(txt, string.format('<a name="%s"/>', section.anchor))
       end
       for i=1,#section do
-         if type(section[i]) == 'string' then
+         if type(section[i]) == 'string' then -- this is NOT a subsection. Do not include sub-sections in there.
             table.insert(txt, section[i])
-         else
---            printsection(section[i], txt) -- do not include sub-sections in there, bouh
          end
       end
    end
@@ -267,9 +301,6 @@ function dok.html2funcs(html, package)
          if key then
             printsection(section, txt)
             txt = table.concat(txt, '\n')
-            --         print('************** FOUND', section.anchor, package)
-            --         print(txt)
-            --         print('********************')
             funcs[key] = adddok(funcs[key], dok.stylize(txt, package))
          end
       end
@@ -282,23 +313,12 @@ function dok.html2funcs(html, package)
    end
    traversesection(sections)
 
---   os.exit()
---   local next = html:gfind('<div class="level%d%s.-".->\n<h%d>(<a.-id=".-">.-</a>)%s*</h%d>(.-)</div>')
---    local next = html:gfind('<div class="level%d%s.-".->\n<h%d>(<a.-id=".-">.-</a>)%s*</h%d>(.-)</div>')
---    for title,body in next do
---       print('T/B', title, body)
---       for func in body:gfind('<a name="' .. package .. '%.(.-)">.-</a>') do
---          if func then
---             funcs[func] = adddok(funcs[func],dok.stylize(title .. '\n' .. body:gsub('<a.-name="(.-)"></a>','') , package))
---          end
---       end
---    end
    return funcs
 end
 
 local function packageiterator()
    local co = coroutine.create(
-                               function()
+      function()
          local trees = mdsearchpaths
 	 for _,tree in ipairs(trees) do
 	    for file in paths.files(tree) do
@@ -307,38 +327,38 @@ local function packageiterator()
 	       end
 	    end
          end
-      end)
+   end)
 
    return function()
-             local code, res1, res2 = coroutine.resume(co)
-             return res1, res2
-          end
+      local code, res1, res2 = coroutine.resume(co)
+      return res1, res2
+   end
 end
 
 local function mditerator(path)
    local co = coroutine.create(
-                               function()
-                                  function iterate(path)
-           if path == '.' or path == '..' then
-           elseif paths.filep(path) then
-              if path:match('%.md$') then
-                 coroutine.yield(path)
-              end
-           else
-              for file in paths.files(path) do
-                 if file ~= '.' and file ~= '..' then
-                    iterate(paths.concat(path, file))
-                 end
-              end
-           end
-        end
-                                  iterate(path)
-                               end)
+      function()
+	 function iterate(path)
+	    if path == '.' or path == '..' then
+	    elseif paths.filep(path) then
+	       if path:match('%.md$') then
+		  coroutine.yield(path)
+	       end
+	    else
+	       for file in paths.files(path) do
+		  if file ~= '.' and file ~= '..' then
+		     iterate(paths.concat(path, file))
+		  end
+	       end
+	    end
+	 end
+	 iterate(path)
+   end)
 
    return function()
-             local code, res = coroutine.resume(co)
-             return res
-          end
+      local code, res = coroutine.resume(co)
+      return res
+   end
 
 end
 
@@ -351,7 +371,7 @@ function dok.refresh()
             local f = io.open(file)
             if f then
                local content = f:read('*all')
-               local html = dok.dok2html(content)
+               local html = dok.markdown2html(content)
                local funcs = dok.html2funcs(html, pkgname)
                if type(pkgtbl) ~= 'table' and _G._torchimport then 
                   -- unsafe import, use protected import
@@ -359,12 +379,12 @@ function dok.refresh()
                end
                if pkgtbl and type(pkgtbl) == 'table' then
                   -- level 0: the package itself
-                  dok.inline[pkgtbl] = dok.inline[pkgtbl] or funcs['dok'] or funcs['reference.dok'] or funcs['overview.dok']
+                  dok.inline[pkgtbl] = dok.inline[pkgtbl] or funcs['dok'] 
+		     or funcs['reference.dok'] or funcs['overview.dok']
                   -- next levels
                   for key,symb in pairs(pkgtbl) do
                      -- level 1: global functions and objects
                      local entry = (key):lower()
---                     print(entry, funcs[entry] ~= nil)
                      if funcs[entry] or funcs[entry..'.dok'] then
                         local sym = string2symbol(pkgname .. '.' .. key)
                         dok.inline[sym] = adddok(funcs[entry..'.dok'],funcs[entry])
@@ -384,7 +404,6 @@ function dok.refresh()
                            if funcs[entry] or funcs[entry..'.dok'] then
                               local sym = string2symbol(pkgname .. '.' .. key .. '.' .. subkey)
                               dok.inline[sym] = adddok(funcs[entry..'.dok'],funcs[entry])
-                              --dok.inline[string2symbol(pkgname .. '.' .. key .. '.' .. subkey)] = funcs[entry]
                            end
                         end
                      end
@@ -411,9 +430,9 @@ function dok.help(symbol, asstring)
    if not symbol then
       print(style.banner)
       print(style.title .. 'help(symbol)' .. style.none 
-            .. '\n\nget inline help on a specific symbol\n'
-            .. '\nto browse the complete html documentation, call: '
-            .. style.title .. 'browse()' .. style.none)
+	       .. '\n\nget inline help on a specific symbol\n'
+	       .. '\nto browse the complete html documentation, call: '
+	       .. style.title .. 'browse()' .. style.none)
       print(style.banner)
       return
    end
@@ -428,7 +447,7 @@ function dok.help(symbol, asstring)
       return inline
    else
       if inline then
-         --print(style.banner)
+         print(style.banner)
          print(inline)
          print(style.banner)
       else
@@ -439,21 +458,106 @@ end
 
 rawset(_G, 'help', dok.help)
 
+-- function to parse a package's markdown files in a different way than for help().
+-- this function returns the package's markdown files names (without extension) along with their headings.
+local function package_headings(pname)
+   local out = {}
+   for pkgname, path in packageiterator() do
+      if pkgname == pname then
+	 local pkgtbl = _G[pkgname] or package.loaded[pkgname]
+	 if pkgtbl then
+	    for file in mditerator(path) do
+	       local basename = paths.basename(file)
+	       basename = basename:sub(1,#basename-3) -- remove .md
+	       local f = io.open(file)
+	       if f then
+		  local heading = 'Untitled'
+		  local content = f:read('*all')
+		  local html = dok.markdown2html(content)
+		  -- find first heading
+		  for line in html:gmatch('[^\n\r]+') do
+		     local level, name = line:match('<h(%d)>(.*)</h%d>')
+		     if level and name then
+			heading = name
+			break -- found the first heading, call it a day
+		     end
+		  end
+		  f:close()
+		  out[basename] = {heading, file}
+	       end -- if f then
+	    end -- for file in mditerator
+	 end -- if pkgtbl
+	 break;
+      end -- if pkgname == pname      
+   end -- for pkgname, path in packageiterator()
+   return out
+end
+
 --------------------------------------------------------------------------------
--- browse() is a simpler function that simply triggers a browser
+-- browse() is a function that triggers a manual viewer in command-line
 --------------------------------------------------------------------------------
-function dok.browse()
-   -- color detect
-   if qtide then
-      dok.dontusecolors()
-   else
-      dok.usecolors()
+function dok.browse(package_name)
+   print(style.banner)
+   print('Inline Package Manual Browser')
+   print(style.banner)
+   print('To exit at any time, type q or exit')
+   if not package_name then
+      print('Enter package name to browse (example: torch):')
+      local answer = io.read()
+      package_name = answer
    end
-   -- trigger browser
-   require 'qtide'
-   qtide.help()
-   package.loaded.qtide = false
-   qtide = nil
+   if package_name == 'exit' then return end
+   local ok, p = pcall(function() require(package_name) end)
+   if not ok then
+      print('Package not found or failed to load:', package_name)
+      return
+   end
+
+   dok.help(package_name)
+   -- Approach 1:
+   -- show all available anchors from this dok and ask user to enter page.
+
+   -- Approach 2:
+   -- show file-by-file. After Overview, traverse Each file, and get the file heading. Print it out.
+   -- Ask user to enter next file they want to traverse-to. (in brackets you can give them hints).
+
+   -- Let's hack Approach 2.
+   local headings = dok.package_headings(package_name)
+   
+   print('Sections:')
+   local example
+   local menu = ''
+   for k,v in pairs(headings) do
+      menu = menu .. '\t' .. v[1] .. ' [' .. k .. ']\n'
+      example = k
+   end
+   assert(example, 'No more subsections for this package')
+   while true do
+      print(menu)
+      print('Enter choice (Example: ' .. example .. ') or type exit. :')
+      local k = io.read()
+      if k == 'exit'  then return end
+      if headings[k] then
+	 local file = headings[k][2]
+	 local f = io.open(file)
+	 if f then
+	    local content = f:read('*all')
+	    local sd = require 'sundown'
+	    local str = sd.renderASCII(content)
+	    local tracker = 0
+	    f:close()
+	    local max_chars = 1000 -- now print this string conservatively, maybe 1000 characters at a time	    
+	    while tracker <= #str do
+	       print(str:sub(tracker, tracker + max_chars))
+	       print('[enter] for more or press any character to exit')
+	       local ans = io.read()
+	       if ans ~= ''  then break; end
+	       tracker = tracker + max_chars
+	    end
+	 end
+      end
+   end
+   
 end
 
 rawset(_G, 'browse', dok.browse)
@@ -510,7 +614,7 @@ function dok.usage(funcname, description, example, ...)
       end
       str = str .. '}\n'
 
-   -- unnamed args:
+      -- unnamed args:
    else
       local idx = 1
       while true do
@@ -557,14 +661,14 @@ function dok.unpack(args, funcname, description, ...)
    -- generate usage string as a closure:
    -- this way the function only gets called when an error occurs
    local fusage = function() 
-                     local example
-                     if #defs > 1 then
-                        example = funcname .. '{' .. defs[2].arg .. '=' .. defs[2].type .. ', '
-                           .. defs[1].arg .. '=' .. defs[1].type .. '}\n'
-                        example = example .. funcname .. '(' .. defs[1].type .. ',' .. ' ...)'
-                     end
-                     return dok.usage(funcname, description, example, {tabled=defs})
-                  end
+      local example
+      if #defs > 1 then
+	 example = funcname .. '{' .. defs[2].arg .. '=' .. defs[2].type .. ', '
+	    .. defs[1].arg .. '=' .. defs[1].type .. '}\n'
+	 example = example .. funcname .. '(' .. defs[1].type .. ',' .. ' ...)'
+      end
+      return dok.usage(funcname, description, example, {tabled=defs})
+   end
    local usage = {}
    setmetatable(usage, {__tostring=fusage})
 
@@ -574,7 +678,7 @@ function dok.unpack(args, funcname, description, ...)
       print(usage)
       error('error')
    elseif #args == 1 and type(args[1]) == 'table' and #args[1] == 0 
-                     and not (torch and torch.typename(args[1]) ~= nil) then
+   and not (torch and torch.typename(args[1]) ~= nil) then
       -- named args
       iargs = args[1]
    else
