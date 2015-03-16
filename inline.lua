@@ -522,7 +522,7 @@ function dok.browse(package_name)
    -- Ask user to enter next file they want to traverse-to. (in brackets you can give them hints).
 
    -- Let's hack Approach 2.
-   local headings = dok.package_headings(package_name)
+   local headings = package_headings(package_name)
    
    print('Sections:')
    local example
