@@ -38,6 +38,9 @@ local mdsearchpaths = splitpackagepath()
 
 local knownpkg = {}
 
+-- Lua 5.2 compatibility
+local unpack = unpack or table.unpack
+
 dok.inline = {}
 
 dok.colors = {
