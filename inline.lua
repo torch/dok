@@ -248,7 +248,8 @@ function dok.html2funcs(html, package)
    local canchor
    local lines = {}
    for line in html:gmatch('[^\n\r]+') do
-      local anchor = line:match('<a.-name="(.-)"/>')
+      local anchor = line:match('<a.-name=["\'](.-)["\']/>') 
+         or line:match('<a.-name=["\'](.-)["\']>.-</a>')
       local level, name = line:match('<h(%d)>(.*)</h%d>')
       if anchor then
          canchor = anchor
