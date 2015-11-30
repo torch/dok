@@ -40,6 +40,7 @@ local knownpkg = {}
 
 -- Lua 5.2 compatibility
 local unpack = unpack or table.unpack
+local loadstring = loadstring or load
 
 dok.inline = {}
 
