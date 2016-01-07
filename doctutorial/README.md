@@ -242,15 +242,15 @@ for i = 1,4 do
 end
 
 t7> myfuncs[1]()
-1
+this function has been called 1 times
 t7> myfuncs[1]()
-2
+this function has been called 2 times
 t7> myfuncs[4]()
-1
+this function has been called 1 times
 t7> myfuncs[4]()
-2
+this function has been called 2 times
 t7> myfuncs[1]()
-3
+this function has been called 3 times
 ```
 
 You can use such closures to create objects on the fly, that is, tables which combine functions and data to act upon. Thanks to closure, data can live in arbitrary locations (not necessarily the object's table), and simply be bound at runtime to the function's scope.
